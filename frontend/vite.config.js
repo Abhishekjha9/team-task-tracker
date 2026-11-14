@@ -1,7 +1,12 @@
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vite';
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+  plugins: [react(), tailwindcss()],
+  server: {
+    port: 5173,
+    // Dev proxy: the frontend calls /api/* and Vite forwards to Express — no CORS hassle in dev.
+    proxy: { '/api': 'http://localhost:5000' },
+  },
+});
