@@ -1,111 +1,252 @@
+@import 'tailwindcss';
+
+/* Dark mode is class-driven (set before paint by index.html, managed by ThemeContext). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+   Design tokens. Components only ever use these (via the Tailwind names
+   below or var(--…)), so one class on <html> re-themes the whole app.
+   ========================================================================== */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  color-scheme: light;
+  --bg: #f6f6f9;
+  --bg-glow: radial-gradient(1200px 500px at 50% -200px, rgb(124 92 255 / 0.07), transparent 70%);
+  --sidebar: #fbfbfd;
+  --surface: #ffffff;
+  --surface-2: #f4f4f7;           /* hover / inset */
+  --surface-3: #ececf1;           /* pressed / track */
+  --elevated: #ffffff;            /* modals, menus, tooltips */
+  --card-gradient: linear-gradient(180deg, #ffffff 0%, #fdfdfe 100%);
+  --input: #ffffff;
+  --line: #e7e7ee;
+  --line-strong: #d9d9e2;
+  --fg: #17171c;
+  --fg-2: #55556a;
+  --fg-3: #8a8a9b;
+  --accent: #6d4aed;
+  --accent-hover: #5c39dc;
+  --accent-fg: #ffffff;
+  --accent-text: #5b38d8;
+  --accent-soft: rgb(109 74 237 / 0.09);
+  --accent-glow: 0 6px 18px -8px rgb(109 74 237 / 0.55);
+  --danger: #dc3a3a;
+  --danger-text: #c42b2b;
+  --success-text: #13795b;
+  --warning-text: #9a6200;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* Status + priority (same hues as the charts; text steps tuned for contrast) */
+  --todo: #2a78d6;      --todo-text: #1f5fae;
+  --progress: #eda100;  --progress-text: #8f5f00;
+  --done: #1baf7a;      --done-text: #10744f;
+  --prio-high: #e5484d; --prio-medium: #ef8a32; --prio-low: #3b9be0;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Charts (validated with the dataviz palette checker against these surfaces) */
+  --chart-todo: #2a78d6;
+  --chart-progress: #eda100;
+  --chart-done: #1baf7a;
+  --chart-assigned: #6250d6;
+  --chart-unassigned: #b4b4c0;
+  --chart-grid: #ececf1;
+  --chart-axis: #8a8a9b;
+  --chart-cursor: rgb(109 74 237 / 0.06);
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  --shadow-card: 0 1px 2px rgb(20 20 40 / 0.04), 0 1px 3px rgb(20 20 40 / 0.03);
+  --shadow-pop: 0 12px 32px -8px rgb(20 20 40 / 0.16), 0 2px 6px rgb(20 20 40 / 0.06);
+  --radius-card: 16px;
+  --radius-control: 10px;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: #0c0c10;
+  --bg-glow: radial-gradient(1100px 520px at 55% -260px, rgb(124 92 255 / 0.16), transparent 70%);
+  --sidebar: #121216;
+  --surface: #16161b;
+  --surface-2: #1d1d24;
+  --surface-3: #26262f;
+  --elevated: #1b1b21;
+  --card-gradient: linear-gradient(180deg, #1a1a20 0%, #141419 100%);
+  --input: #111115;
+  --line: #24242c;
+  --line-strong: #30303a;
+  --fg: #ececf1;
+  --fg-2: #a3a3b2;
+  --fg-3: #6f6f80;
+  --accent: #7457f5;
+  --accent-hover: #8467ff;
+  --accent-fg: #ffffff;
+  --accent-text: #a895ff;
+  --accent-soft: rgb(124 92 255 / 0.14);
+  --accent-glow: 0 8px 24px -8px rgb(124 92 255 / 0.6);
+  --danger: #e5484d;
+  --danger-text: #ff7a7e;
+  --success-text: #4cc89a;
+  --warning-text: #f0b443;
+
+  --todo: #3987e5;      --todo-text: #82b4f2;
+  --progress: #c98500;  --progress-text: #f0b443;
+  --done: #199e70;      --done-text: #4cc89a;
+  --prio-high: #f0585d; --prio-medium: #f29a4a; --prio-low: #5aa9ee;
+
+  --chart-todo: #3987e5;
+  --chart-progress: #c98500;
+  --chart-done: #199e70;
+  --chart-assigned: #9085e9;
+  --chart-unassigned: #4a4a57;
+  --chart-grid: #222229;
+  --chart-axis: #6f6f80;
+  --chart-cursor: rgb(255 255 255 / 0.035);
+
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.02) inset, 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-pop: 0 16px 40px -10px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(255 255 255 / 0.03);
+}
+
+@theme inline {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --color-bg: var(--bg);
+  --color-sidebar: var(--sidebar);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-elevated: var(--elevated);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-text: var(--accent-text);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-danger-text: var(--danger-text);
+  --color-success-text: var(--success-text);
+  --color-warning-text: var(--warning-text);
+}
+
+@layer base {
+  html { background: var(--bg); }
+  body {
+    @apply bg-bg font-sans text-fg antialiased;
+    background-image: var(--bg-glow);
+    background-repeat: no-repeat;
+    min-height: 100vh;
   }
+  ::selection { background: color-mix(in oklab, var(--accent) 30%, transparent); }
+  * { scrollbar-color: var(--line-strong) transparent; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+/* Smooth cross-fade only while switching themes (added for ~300ms by ThemeContext). */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 280ms ease, border-color 280ms ease, color 280ms ease, fill 280ms ease, stroke 280ms ease, box-shadow 280ms ease !important;
 }
 
-body {
-  margin: 0;
+/* ---------------------------- Components ---------------------------- */
+@utility card {
+  background: var(--card-gradient);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+@utility input {
+  @apply w-full rounded-[10px] border border-line-strong bg-[var(--input)] px-3 py-2 text-sm text-fg
+    placeholder:text-fg-3 transition-[border-color,box-shadow] duration-200
+    hover:border-[color-mix(in_oklab,var(--accent)_35%,var(--line-strong))]
+    focus:border-accent focus:ring-4 focus:ring-accent/15 focus:outline-none
+    disabled:cursor-not-allowed disabled:opacity-60;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-medium text-fg-2;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-[10px] px-3.5 py-2 text-sm font-medium whitespace-nowrap
+    transition-[background-color,color,border-color,box-shadow,opacity] duration-200
+    focus-visible:ring-4 focus-visible:ring-accent/25 focus-visible:outline-none
+    disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-accent text-accent-fg hover:bg-accent-hover;
+  box-shadow: var(--accent-glow), inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+@utility btn-secondary {
+  @apply btn border border-line-strong bg-surface text-fg hover:bg-surface-2;
+}
+@utility btn-danger {
+  @apply btn bg-danger text-white hover:brightness-110;
+}
+@utility btn-ghost {
+  @apply btn px-2 text-fg-2 hover:bg-surface-2 hover:text-fg;
+}
+@utility icon-btn {
+  @apply inline-flex size-9 items-center justify-center rounded-full text-fg-2 transition-colors duration-200
+    hover:bg-surface-2 hover:text-fg focus-visible:ring-4 focus-visible:ring-accent/25 focus-visible:outline-none;
+}
+@utility pill-group {
+  @apply flex items-center gap-1 rounded-full border border-line bg-surface p-1;
+}
+@utility eyebrow {
+  @apply text-[11px] font-medium tracking-[0.08em] text-fg-3 uppercase;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+/* Status badges: tinted surface + readable text, both from the status tokens. */
+@utility tone-todo {
+  background: color-mix(in oklab, var(--todo) 13%, transparent);
+  color: var(--todo-text);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--todo) 26%, transparent);
+}
+@utility tone-progress {
+  background: color-mix(in oklab, var(--progress) 14%, transparent);
+  color: var(--progress-text);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--progress) 28%, transparent);
+}
+@utility tone-done {
+  background: color-mix(in oklab, var(--done) 13%, transparent);
+  color: var(--done-text);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--done) 26%, transparent);
+}
+@utility tone-accent {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 24%, transparent);
+}
+@utility tone-neutral {
+  background: var(--surface-2);
+  color: var(--fg-2);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
+/* Stable per-user avatar tints, theme-aware. */
+@utility avatar-0 { background: color-mix(in oklab, #7c5cff 20%, var(--surface)); color: var(--accent-text); }
+@utility avatar-1 { background: color-mix(in oklab, var(--todo) 20%, var(--surface)); color: var(--todo-text); }
+@utility avatar-2 { background: color-mix(in oklab, var(--done) 20%, var(--surface)); color: var(--done-text); }
+@utility avatar-3 { background: color-mix(in oklab, var(--progress) 22%, var(--surface)); color: var(--progress-text); }
+@utility avatar-4 { background: color-mix(in oklab, #e5487a 20%, var(--surface)); color: color-mix(in oklab, #e5487a 70%, var(--fg)); }
+@utility avatar-5 { background: color-mix(in oklab, #14a3b8 20%, var(--surface)); color: color-mix(in oklab, #14a3b8 70%, var(--fg)); }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+/* ------------------------------ Charts ------------------------------ */
+.chart-mark { transition: fill-opacity 220ms ease, opacity 220ms ease, filter 220ms ease; }
+.donut-seg {
+  transition: transform 240ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 220ms ease;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
+.donut-seg.is-active { transform: scale(1.045); }
+.donut-seg.is-dim { opacity: 0.35; }
+.recharts-tooltip-wrapper { z-index: 10; }
+.recharts-surface:focus, .recharts-wrapper:focus, .recharts-sector:focus { outline: none; }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
+/* ----------------------------- Motion ------------------------------ */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop-in { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes tip-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+@utility animate-fade-in { animation: fade-in 160ms ease-out; }
+@utility animate-pop-in { animation: pop-in 180ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+@utility animate-tip-in { animation: tip-in 160ms ease-out; }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }

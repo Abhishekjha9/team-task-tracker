@@ -1,7 +1,5 @@
--- Team Task Tracker schema
-CREATE DATABASE IF NOT EXISTS task_tracker
-  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE task_tracker;
+-- 001: original single-user schema (users + tasks owned by user_id).
+-- Idempotent so it can be applied to databases created before migrations existed.
 
 CREATE TABLE IF NOT EXISTS users (
   id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
